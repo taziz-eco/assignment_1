@@ -17,7 +17,7 @@ format:
         }
         \pagestyle{style2}
 execute: 
-  eval: false
+  eval: true
   echo: true
 ---
 
@@ -25,7 +25,7 @@ execute:
 #| label: setup 
 #| include: FALSE
 
-install.packages("tikzDevice")
+# install.packages("tikzDevice")
 # Load the tikzDevice library
 library(tikzDevice)
 
@@ -83,11 +83,11 @@ An important note is that after writing a command, put a space after the command
 
 Re-write the following equations in LaTeX. 
 
-(a) 
-(b) 
-(c) 
-(d) 
-(e)  
+(a) $E(Y)=y_{1}p_{1}+...+y_{k}p_{k}=\sum_{i=1}^k y_{i}p_{i}$
+(b) $\sigma_{Y}=Var(Y)= E[(Y-\mu_y)^2]=\sum_{i=1}^k(y_i-\mu_y)^2p_i$
+(c) $\hat{\beta}=\frac{\sum_{i=1}^n(y-y_i)(x-x_i)}{\sum_{i=1}^n(x-x_i)2}$
+(d) $P(a\leq Y \leq b)=\int_{a}^{b}f_Y(y)dy$
+(e) $\hat{g}(x)=\frac{\frac{1}{nh}\sum_{i=1}^ny_ik(\frac{x_i-x}{h})}{\frac{1}{nh}\sum_{i=1}^nk(\frac{x_i-x}{h})}$
   
 # 3. R
 
@@ -96,18 +96,56 @@ Re-write the following equations in LaTeX.
 Note: When creating variables based on equation, separate each element in the equation with the appropriate arithmetic symbol. E.g., to compute $x(y-2)$ in R, you would have to type `x*(y-2)`. `x(y-2)`, with not arithmetic symbol between $x$ and the left bracket would result in an error. 
 
 (a) In statistics, $n$ is often used to denoted the sample size. Set the number of observations $n=1000$.
+```{r}
+n <- 1000
+```
+
+
 (b) Generate two random variables, $u_1\sim U(0,1)$ and $u_2\sim U(0,1)$ with $n/2=500$ observations. That is, create two variables that follow a uniform distribution between 0 and 1 that each have 500 observations. In R, we can create random uniform variables using the `runif(k,min,max)` function, where `k` is number of observations, `min` is the minimum value, and `max` is the maximum value. The default values for `min` and `max` are 0 and 1, respectively. Type `?runif` into your console to learn more.
+```{r}
+u1 <- runif(n/2,0,1)
+u2 <- runif(n/2,0,1)
+```
+
+
 (c) Generate two variables $z_1$ and $z_2$ that take on the following values: $$z_1=\sqrt{-2\ln(u_1)}\times\text{cos}(2\pi u_2)$$ and $$z_1=\sqrt{-2\ln(u_1)}\times\text{sin}(2\pi u_2).$$ In R, $\sqrt{\text{  }}$ is computed using `sqrt()`, $\ln$ is computed using `log()`, $\text{cos}$ is computed using `cos()`, and $\text{sin}$ is computed using `sin()`. 
+```{r}
+z1 <- sqrt(-2*log(u1))*cos(2*pi*u2)
+z2 <- sqrt(-2*log(u1))*sin(2*pi*u2)
+```
+
 (d) Generate a vector $z=[z_1,z_2]$ 
+```{r}
+z <- c(z1,z2)
+```
+
+
 (e) Generate two variables $\mu$ (spelled mu) and $\sigma$ (spelled sigma). Set $\mu=5$ and $\sigma=2$. 
+```{r}
+mu <- 5
+sigma <- 2
+```
+
 (f) Generate a variable $x=\mu+\sigma\times z$
+```{r}
+x <- mu+sigma*z
+```
+
+
 (g) Calculate the mean of $x$, using `mean()` and the standard deviation of $x$ using `sd()`.
+```{r}
+mean(x)
+sd(x)
+```
+
+
 (h) Use the following code to plot a histogram of $x$ with the normal distribution curve. 
 
 ```{r}
 #| fig-cap: "Histogram of $x$"
+#| dev: pdf
 #| dependson: q1
-#| eval: false
+#| eval: true
 #| echo: true
 
 hist(x,
@@ -129,7 +167,7 @@ A data frame in R is a table-like data structure used to store data in rows and 
 ```{r}
 #| label: tbl-hlth
 #| eval: true
-#| echo: false
+#| echo: true
 #| tbl-cap: "Total health expenditure by use of funds, in millions of current dollars, Canada, 1975 to 2022 (Source: CIHI National Health Expenditure Trends)"
 cihi <- read.csv("hlthexp.csv")
 
@@ -148,23 +186,112 @@ knitr::kable(df,
 ```
 
 (a) Determine if there are any missing values for the variable `Hospitals`.
-(a) Add a variable called "Total Other Services" to the data frame `df`, where $$\text{Total Other Services} = \text{Dental}+\text{Vision}+\text{Other Professional}.$$ To add a newly created variable to a data frame use the syntax `dataframe$varname <- expression`.
-(a) Are there any years for which Total Other Professionals 
-(a) Another way to add a variable to a data frame is to simply create a new data frame and append the new variable to it. Note: we can use the same data frame name. I.e., `df<-data.frame(df,newvarname = newvar)`. Add the variable "Prescription Drugs" to the `df` data frame using the append method, where presricption drugs is named "Prescribed.Drugs" in the `cihi` data.frame.
-(a) Using a single R command, determine the expenditure on hospitals in 1983.
-(a) Using a singe R command, list the expenditures by year for 2012-2022. 
+```{r}
+is.na(df$Hospitals)
+```
+
+
+(b) Add a variable called "Total Other Services" to the data frame `df`, where $$\text{Total Other Services} = \text{Dental}+\text{Vision}+\text{Other Professional}.$$ To add a newly created variable to a data frame use the syntax `dataframe$varname <- expression`.
+```{r}
+df$TotalOtherServices <- df$Dental+df$Vision+df$"Other Professionals"
+```
+
+
+(c) Are there any years for which Total Other Professionals 
+(d) Another way to add a variable to a data frame is to simply create a new data frame and append the new variable to it. Note: we can use the same data frame name. I.e., `df<-data.frame(df,newvarname = newvar)`. Add the variable "Prescription Drugs" to the `df` data frame using the append method, where presricption drugs is named "Prescribed.Drugs" in the `cihi` data.frame.
+```{r}
+df <- data.frame(df,"Prescription.Drugs"= cihi$Prescribed.Drugs)
+```
+
+
+(e) Using a single R command, determine the expenditure on hospitals in 1983.
+
+```{r}
+df$Hospitals[df$Year==1983]
+```
+
+(f) Using a single R command, list the expenditures by year for 2012-2022. 
+```{r}
+df[df$Year>=2012 & df$Year<=2022,]
+```
 
 ## 3.3 Other useful R commands. 
 
 Load the `mpg` dataset from the `ggplot2` package using `mpg <-ggplot2::mpg`. (Be sure to install the `gglot2` package before you start.)
+```{r}
+library(ggplot2)
+mpg <-ggplot2::mpg
+```
+
 
 (a) Subset the data to include only observations from 2008. Search `?subset` in the console. (a) Calculate the maximum and minimum miles per gallon in city limits (`cty`). Seach `?min` in the console.
-(a) Estimate the average miles per gallon within city limits for cars produced in 2008 using the formula $$\text{Average mpg}=\frac{\sum_{i=1}^n \text{cty}_i}{n}.$$ Recall that $n$ is the number of observations. Search `?length` in the console.
-(a) Estimate the average miles per gallon within city limits for cars produced in 2008 using the `mean()` function. 
-(a) Create a variable called `compact`, which takes a value of 1 if the vehichle is a compact and 0 otherwise. Search `?ifelse` in the console.
-(a) Estimate the average miles per gallon within city limits for compact cars. (You may use whichever method you prefer).
-(a) Create a simple scatter plot with city mpg (`cty`) on the x-axis and highway mpg (`hwy`) on the y-axis. Search `?plot` and choose "Generic X-Y Plotting". 
+```{r}
+#Creating data subset for 2008
+mpg_2008 <- subset(mpg, year==2008)
+
+max(mpg_2008$cty)
+min(mpg_2008$cty)
+```
+
+
+(b) Estimate the average miles per gallon within city limits for cars produced in 2008 using the formula $$\text{Average mpg}=\frac{\sum_{i=1}^n \text{cty}_i}{n}.$$ Recall that $n$ is the number of observations. Search `?length` in the console.
+```{r}
+#Avg_mpg
+sum(mpg_2008$cty)
+length(mpg_2008$cty)
+sum(mpg_2008$cty)/length(mpg_2008$cty)
+```
+
+
+(c) Estimate the average miles per gallon within city limits for cars produced in 2008 using the `mean()` function. 
+```{r}
+mean(mpg_2008$cty)
+```
+
+
+(d) Create a variable called `compact`, which takes a value of 1 if the vehichle is a compact and 0 otherwise. Search `?ifelse` in the console.
+```{r}
+mpg_2008$compact <- ifelse(mpg_2008$class == "compact", 1, 0)
+```
+
+
+(e) Estimate the average miles per gallon within city limits for compact cars. (You may use whichever method you prefer).
+```{r}
+mean(mpg_2008$cty[mpg_2008$compact == 1])
+```
+
+
+(f) Create a simple scatter plot with city mpg (`cty`) on the x-axis and highway mpg (`hwy`) on the y-axis. Search `?plot` and choose "Generic X-Y Plotting". 
+```{r}
+city <- mpg_2008$cty
+hwy <- mpg_2008$hwy
+plot(x = city,
+     y = hwy)
+```
+
+
     (i) Change the x-axis label using the option `xlab = "City MPG"` and change the y-axis label using the option `ylab = "Highway MPG"`. 
+```{r}
+plot(city, hwy,
+     xlab = "City MPG",
+     ylab = "Highway MPG")
+```
+
+    
     (ii) Add the caption "City Versus Highway Fuel Efficiency (MPG)"
+```{r}
+#| label: fig-q3
+
+
+plot(city, hwy,
+     xlab = "City MPG",
+     ylab = "Highway MPG",
+     main = "City Versus Highway Fuel Efficiency (MPG)",
+     col = "green")
+```
+    
+
     (iii) Cross reference the figure and add the text "Figure 1 shows the fuel efficiency for city driving versus highway driving". 
+
+@fig-q3 shows the fuel efficiency for city driving versus highway driving
  
