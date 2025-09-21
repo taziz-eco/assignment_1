@@ -2,7 +2,7 @@
 title: |
   | ECON 7201
   | Applied Econometrics
-subtitle: "Assignment 1" 
+subtitle: "Assignment 1"
 author: "Tarik Aziz [Student ID# 3190009]"
 format: 
   pdf:
